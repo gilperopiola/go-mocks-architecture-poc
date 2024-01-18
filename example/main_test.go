@@ -1,7 +1,6 @@
 package example
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/gilperopiola/go-mocks-architecture-poc/example/core"
@@ -10,89 +9,92 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSvcGetUser(t *testing.T) {
-	tests := []struct {
-		name             string
-		argUserID        int
-		argCheckIdentity bool
-		want             *core.User
-		wantErr          error
+// TestSvcGetUser tests a method that makes 2 calls to other methods, both belonging to the Repository.
+// So, to test Svc.GetUser in isolation, we have to mock both Repository.GetUser and Repository.IsUserValid.
 
-		mockRepository func() *mocks.RepositoryMock
+func TestSvcGetUser(t *testing.T) {
+
+	type deps struct {
+		repository func() *mocks.RepositoryMock
+	}
+	type in struct {
+		userID        int
+		checkIdentity bool
+	}
+	type out struct {
+		user *core.User
+		err  error
+	}
+
+	tests := []struct {
+		name string
+		deps deps
+		in   in
+		out  out
 	}{
 		{
-			name:             "success",
-			argUserID:        1,
-			argCheckIdentity: true,
-			want:             mocks.GetUserOptions["default"].Response,
-			wantErr:          nil,
+			name: "success",
+			in:   in{userID: 1, checkIdentity: true},
+			out:  out{user: mocks.GetUserOptions["default"].Response, err: nil},
 
-			mockRepository: func() *mocks.RepositoryMock {
-				getUserValues := mocks.GetUserOptions["default"]
-				mock := mocks.SetupWithGetUser(getUserValues.UserID, getUserValues.Response, getUserValues.Error)
-
-				isUserValidValues := mocks.IsUserValidOptions["valid"]
-				mock = mocks.SetupWithIsUserValid(mock, isUserValidValues.UserID, isUserValidValues.Valid)
-
-				return mock
-			},
+			deps: deps{repository: func() *mocks.RepositoryMock {
+				return setupWithGetUserAndIsUserValid("default", "valid")
+			}},
 		},
 		{
-			name:             "error_invalid_user",
-			argUserID:        1,
-			argCheckIdentity: true,
-			want:             mocks.GetUserOptions["none"].Response,
-			wantErr:          fmt.Errorf("GetUser: !s.Repository.IsUserValid(id)"),
+			name: "error_invalid_user",
+			in:   in{userID: 1, checkIdentity: true},
+			out:  out{user: mocks.GetUserOptions["none"].Response, err: errInvalidUser},
 
-			mockRepository: func() *mocks.RepositoryMock {
-				getUserValues := mocks.GetUserOptions["default"]
-				mock := mocks.SetupWithGetUser(getUserValues.UserID, getUserValues.Response, getUserValues.Error)
-
-				isUserValidValues := mocks.IsUserValidOptions["invalid"]
-				mock = mocks.SetupWithIsUserValid(mock, isUserValidValues.UserID, isUserValidValues.Valid)
-
-				return mock
-			},
+			deps: deps{repository: func() *mocks.RepositoryMock {
+				return setupWithGetUserAndIsUserValid("default", "invalid")
+			}},
 		},
 		{
-			name:             "error_invalid_id",
-			argUserID:        0,
-			argCheckIdentity: true,
-			want:             mocks.GetUserOptions["none"].Response,
-			wantErr:          fmt.Errorf("GetUser: user.ID == 0"),
+			name: "error_invalid_id",
+			in:   in{userID: 0, checkIdentity: true},
+			out:  out{user: mocks.GetUserOptions["none"].Response, err: errInvalidID},
 
-			mockRepository: func() *mocks.RepositoryMock {
+			deps: deps{repository: func() *mocks.RepositoryMock {
 				getUserValues := mocks.GetUserOptions["none"]
 				mock := mocks.SetupWithGetUser(getUserValues.UserID, getUserValues.Response, getUserValues.Error)
 				return mock
-			},
+			}},
 		},
 		{
-			name:             "error_getting_user",
-			argUserID:        0,
-			argCheckIdentity: true,
-			want:             mocks.GetUserOptions["err_not_found"].Response,
-			wantErr:          fmt.Errorf("GetUser: s.Repository.GetUser(id) error: %v", fmt.Errorf("user not found")),
+			name: "error_getting_user",
+			in:   in{userID: 0, checkIdentity: true},
+			out:  out{user: mocks.GetUserOptions["err_not_found"].Response, err: errGettingUser},
 
-			mockRepository: func() *mocks.RepositoryMock {
+			deps: deps{repository: func() *mocks.RepositoryMock {
 				getUserValues := mocks.GetUserOptions["err_not_found"]
 				mock := mocks.SetupWithGetUser(getUserValues.UserID, getUserValues.Response, getUserValues.Error)
 				return mock
-			},
+			}},
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
 
 			// Prepare
-			svc := Svc{Repository: tt.mockRepository()}
+			svc := Svc{Repository: tc.deps.repository()}
 
 			// Act
-			got, err := svc.GetUser(tt.argUserID, tt.argCheckIdentity)
+			got, err := svc.GetUser(tc.in.userID, tc.in.checkIdentity)
 
 			// Assert
-			assert.Equal(t, tt.want, got)
-			assert.Equal(t, tt.wantErr, err)
+			assert.Equal(t, tc.out.user, got)
+			assert.Equal(t, tc.out.err, err)
+
+			tc.deps.repository().AssertExpectations(t)
 		})
 	}
+}
+
+func setupWithGetUserAndIsUserValid(getUserOption, isUserValidOption string) *mocks.RepositoryMock {
+	getUserValues := mocks.GetUserOptions[getUserOption]
+	isUserValidValues := mocks.IsUserValidOptions[isUserValidOption]
+
+	mock := mocks.SetupWithGetUser(getUserValues.UserID, getUserValues.Response, getUserValues.Error)
+	return mocks.SetupWithIsUserValid(mock, isUserValidValues.UserID, isUserValidValues.Valid)
 }

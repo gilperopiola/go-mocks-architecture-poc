@@ -26,7 +26,6 @@ func (m *RepositoryMock) GetUser(id int) (*core.User, error) {
 var GetUserOptions = map[string]struct {
 	// Params
 	UserID int
-
 	// Return values
 	Response *core.User
 	Error    error
@@ -64,7 +63,6 @@ func (m *RepositoryMock) IsUserValid(id int) bool {
 var IsUserValidOptions = map[string]struct {
 	// Params
 	UserID int
-
 	// Return values
 	Valid bool
 }{
