@@ -33,23 +33,17 @@ var repositoryMockGetUserOptions = map[string]struct {
 	Error    error
 }{
 	"none": {
-		UserID: 0,
-
+		UserID:   0,
 		Response: User{},
 		Error:    nil,
 	},
 	"default": {
-		UserID: 1,
-
-		Response: User{
-			ID:       1,
-			Username: "John",
-		},
-		Error: nil,
+		UserID:   1,
+		Response: User{ID: 1, Username: "John"},
+		Error:    nil,
 	},
 	"err_not_found": {
-		UserID: 0,
-
+		UserID:   0,
 		Response: User{},
 		Error:    fmt.Errorf("user not found"),
 	},
