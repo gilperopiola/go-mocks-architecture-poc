@@ -22,9 +22,9 @@ func (m *RepositoryMock) GetUser(id int) (User, error) {
 	return args.Get(0).(User), args.Error(1)
 }
 
-// repositoryMockGetUserOptions has all the different options that the mock will handle.
+// repositoryMockrepositoryGetUserOptions has all the different options that the mock will handle.
 // Each case has the parameters and return values that the method call will use
-var repositoryMockGetUserOptions = map[string]struct {
+var repositoryMockrepositoryGetUserOptions = map[string]struct {
 	// Params
 	UserID int
 
