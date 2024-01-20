@@ -1,12 +1,19 @@
 # Go Mocks Architecture - Proof of Concept
 
+*`Welcome :)`*
+
  > GOLANG 🐹 - UNIT TESTS 🔍 - MOCKS 🎭
 
- >     THIS IS AN EASY PATTERN DESIGNED FOR SIMPLE, READABLE, UNDERSTANDABLE & REUSABLE CODE 🐋
+ >     🐋 THIS IS AN EASY PATTERN DESIGNED FOR SIMPLE - READABLE - UNDERSTANDABLE - REUSABLE CODE 🐋
 
-```bash
-// --- WE HAVE A METHOD THAT WE NEED TO TEST:
+****
 
+### Quickest tour ⚡
+
+*`We have a method that we need to test:`*
+
+
+```go
 func (a *App) GetUser(id int) *User {
 	if user, err := a.Repository.GetUser(id); err == nil {
 		return user
@@ -14,9 +21,10 @@ func (a *App) GetUser(id int) *User {
 
 	return nil
 }
+```
+*`a.Repository.GetUser(id) is the actual call that we are mocking. For each scenario (success, user not found, etc.) we define the arguments that call is going to take, and the values it will return:`*
 
-// --- SO WE WRITE THE DIFFERENT SCENARIOS THAT THE CALL TO a.Repository.GetUser(id) WILL HANDLE:
-
+```go
 var getUserScenarios = map[string]struct {
 	UserID int
 	ResponseUser *User
