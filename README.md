@@ -1,19 +1,21 @@
 # Go Mocks Architecture - Proof of Concept
 
-This is just a POC of a way to structure mocks and use them effectively on table-driven unit tests in Go. It focuses on maximizing simplicity when writing or reading tests, giving a name and predefining the different scenarios that the mock will encounter, thus allowing different tests to reuse those predefined options.
+GOLANG. UNIT TESTS. MOCKS. 
+
+THIS IS AN EASY PATTERN DESIGNED FOR SIMPLE, READABLE, UNDERSTANDABLE & REUSABLE CODE.
 
 ```bash
-var mockMethodOptions = map[string]struct {
+var mockMethodScenarios = map[string]struct {
   Argument int
   Response *User
 }{
 	"none": {
-      Argument: 0,
-      Response: nil,
+		Argument: 0,
+		Response: nil,
 	},
 	"default": {
-      Argument: 1,
-      Response: &User{},
+		Argument: 1,
+		Response: &User{},
 	},
 }
 
@@ -23,16 +25,62 @@ func setupMock(argument int, response *User) *RepositoryMock {
 	return mock
 }
 
-func TestSomething(t *testing.T) etc {
-  values := mockMethodOptions["default"]
-  mock := setupMock(values.Argument, values.Response)
+func TestSomething(t *testing.T) {
+	values := mockMethodScenarios["default"]
+	mock := setupMock(values.Argument, values.Response)
 
-  app := App{Repository: mock}
-  assert.True(t, app.Test())
+	app := App{Repository: mock}
+	assert.True(t, app.Test())
 }
 ```
 
-`What?` So the different options a mock method can behave in are defined alongside the mock, making them reusable for every test that needs to mock that method? `Just incredible! 🥳`
+
+
+Unit tests are often left unpolished, messy, dirty. 
+
+And if you can't read or understand what the test cases are doing, you won't be able to fix them when they break. 
+
+So you spend some time failing to fully grasp the intent of each case before commenting it away and starting anew. Happens.
+
+So I've decided to spend a tiny bit of time on the short run (setting up mock scenarios and writing some simple almost-copy-paste functions) to:
+
+ - Improve tests simplicity and readability, understandability.
+ - Be able to re-use mock scenarios in different tests.
+ - Gain back some of the hours lost to aimless coding.
+
+This is just a POC of a way to structure mocks and use them effectively on table-driven unit tests in Go. It focuses on maximizing simplicity when writing or reading tests, giving a name and predefining the different scenarios that the mock will encounter, thus allowing different tests to reuse those predefined options.
+
+```bash
+var mockMethodScenarios = map[string]struct {
+  Argument int
+  Response *User
+}{
+	"none": {
+		Argument: 0,
+		Response: nil,
+	},
+	"default": {
+		Argument: 1,
+		Response: &User{},
+	},
+}
+
+func setupMock(argument int, response *User) *RepositoryMock {
+	mock := newRepositoryMock()
+	mock.On("MyMethod", argument).Return(response).Once()
+	return mock
+}
+
+func TestSomething(t *testing.T) {
+	values := mockMethodScenarios["default"]
+	mock := setupMock(values.Argument, values.Response)
+
+	app := App{Repository: mock}
+	assert.True(t, app.Test())
+}
+```
+
+`What!?😱` So the different ways a mock method can behave in are defined alongside the mock, making them reusable for every test that needs to mock that method? `Just incredible!!! 🥳`.
 
 ## How do I use it? 🤔
 

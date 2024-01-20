@@ -6,26 +6,26 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// RepositoryMock holds mock testing methods for the Repository
+// RepositoryMock: implements the RepositoryI interface. Has mock methods
 type RepositoryMock struct {
 	*mock.Mock
 }
 
+// newRepositoryMock: creates a new *RepositoryMock
 func newRepositoryMock() *RepositoryMock {
 	return &RepositoryMock{&mock.Mock{}}
 }
 
-// GetUser is a mock method. When the MockRepository is used on a test, this method
-// will be called instead of the actual Repository's GetUser one
+// GetUser: mock method. On tests, this will be called instead of the actual GetUser method
 func (m *RepositoryMock) GetUser(id int) (User, error) {
 	args := m.Called(id)
 	return args.Get(0).(User), args.Error(1)
 }
 
-// repositoryMockrepositoryGetUserOptions has all the different options that the mock will handle.
-// Each case has the parameters and return values that the method call will use
-var repositoryMockrepositoryGetUserOptions = map[string]struct {
-	// Params
+// repositoryMockGetUserScenarios: map with the different scenarios the mock will handle.
+// Each scenario has the arguments and return values that the method call will use
+var repositoryMockGetUserScenarios = map[string]struct {
+	// Arguments
 	UserID int
 
 	// Return values
@@ -49,7 +49,7 @@ var repositoryMockrepositoryGetUserOptions = map[string]struct {
 	},
 }
 
-// setupRepositoryMockWithGetUser is a helper, just creates the mock and places the call to the method
+// setupRepositoryMockWithGetUser: creates the mock and calls the method
 func setupRepositoryMockWithGetUser(userID int, response User, err error) *RepositoryMock {
 	repositoryMock := newRepositoryMock()
 	repositoryMock.On("GetUser", userID).Return(response, err).Once()
