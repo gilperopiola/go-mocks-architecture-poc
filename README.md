@@ -1,10 +1,8 @@
-# Go Mocks Architecture - Proof of Concept
+# Go Mocks Architecture ⭐ 
 
-*`Welcome :)`*
+**`⬤ Welcome!` ~~~ `GOLANG 🐹 · UNIT TESTS 🔍 · MOCKS 🎭`**
 
- > GOLANG 🐹 - UNIT TESTS 🔍 - MOCKS 🎭
-
- >     🐋 THIS IS AN EASY PATTERN DESIGNED FOR SIMPLE - READABLE - UNDERSTANDABLE - REUSABLE CODE 🐋
+🐋 This is an easy pattern designed for **SIMPLE** · **READABLE** · **UNDERSTANDABLE** · **REUSABLE CODE** 🐋
 
 ****
 
