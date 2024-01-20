@@ -38,13 +38,13 @@ func TestSvcGetUser(t *testing.T) {
 			name: "success",
 			in:   in{userID: 1, checkIdentity: true},
 			out:  out{user: mocks.Options.RepositoryGetUser["default"].Response, err: nil},
-			deps: deps{repository: setupWithGetUserAndIsUserValid("default", "valid")},
+			deps: deps{repository: setupRepositoryWithGetUserAndIsUserValid("default", "valid")},
 		},
 		{
 			name: "error_invalid_user",
 			in:   in{userID: 1, checkIdentity: true},
 			out:  out{user: mocks.Options.RepositoryGetUser["none"].Response, err: errInvalidUser},
-			deps: deps{repository: setupWithGetUserAndIsUserValid("default", "invalid")},
+			deps: deps{repository: setupRepositoryWithGetUserAndIsUserValid("default", "invalid")},
 		},
 		{
 			name: "error_invalid_id",
@@ -77,8 +77,8 @@ func TestSvcGetUser(t *testing.T) {
 	}
 }
 
-// setupWithGetUserAndIsUserValid is used when both Repository methods are called, allowing an option for each one
-func setupWithGetUserAndIsUserValid(getUserOption, isUserValidOption string) *mocks.RepositoryMock {
+// setupRepositoryWithGetUserAndIsUserValid is used when both Repository methods are called, allowing an option for each one
+func setupRepositoryWithGetUserAndIsUserValid(getUserOption, isUserValidOption string) *mocks.RepositoryMock {
 	mock := mocks.SetupRepositoryWithGetUser(getUserOption)
 	mock = mocks.SetupRepositoryWithIsUserValid(mock, isUserValidOption)
 	return mock

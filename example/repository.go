@@ -16,6 +16,7 @@ func (r *Repository) GetUser(id int) (*core.User, error) {
 	return &core.User{}, nil
 }
 
+// IsUserValid should be the actual implementation of the method. Used in real life
 func (r *Repository) IsUserValid(id int) bool {
 	return false
 }
