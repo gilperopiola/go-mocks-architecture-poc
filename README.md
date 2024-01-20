@@ -61,9 +61,8 @@ func setupMock(userID int, userToReturn *User) *RepositoryMock {
 	return mock
 }
 ```
-// --- OF COURSE THIS CAN BE APPLIED TO TABLE-DRIVEN TESTS OR WHATEVER FORMAT YOU USE.
 
-
+OF COURSE THIS CAN BE APPLIED TO TABLE-DRIVEN TESTS OR WHATEVER FORMAT YOU USE.
 
 Unit tests are often left unpolished, messy, dirty. 
 
