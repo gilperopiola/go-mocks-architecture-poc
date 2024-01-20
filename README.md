@@ -4,65 +4,64 @@
 
 🐋 This is an easy pattern designed for **SIMPLE** · **READABLE** · **UNDERSTANDABLE** · **REUSABLE CODE** 🐋
 
-****
+----
 
 ### Quickest tour ⚡
 
-*`We have a method that we need to test:`*
-
+_**·** We wanna unit test this method:_
 
 ```go
-func (a *App) GetUser(id int) *User {
+func (a *App) DeleteUser(id int) *User {
 	if user, err := a.Repository.GetUser(id); err == nil {
+		// ... code to delete the user
 		return user
 	}
 
 	return nil
 }
 ```
-*`a.Repository.GetUser(id) is the actual call that we are mocking. For each scenario (success, user not found, etc.) we define the arguments that call is going to take, and the values it will return:`*
+_**·** `a.Repository.GetUser(id)` is the actual call that we will mock. For each scenario (`success`, `user not found`) we define the **arguments** and **return values** of the call:_
 
 ```go
-var getUserScenarios = map[string]struct {
-	UserID int
-	ResponseUser *User
+var getUserMockScenarios = map[string]struct {
+	UserID       int   // argument
+	UserToReturn *User // return value
 }{
-	"none": {
-		UserID: 0,
-		ResponseUser: nil,
-	},
-	"default": {
+	"success": {
 		UserID: 1,
-		ResponseUser: &User{},
+		UserToReturn: &User{},
+	},
+	"user_not_found": {
+		UserID: 0,
+		UserToReturn: nil,
 	},
 }
+```
 
-// --- AND THEN JUST COPY-PASTE-CHANGE THIS FOR EACH METHOD:
+_**·** And to use this on a test, you just have to get the values of the scenario you need and set up the mock:_
 
-func setupMock(userID int, responseUser *User) *RepositoryMock {
-	mock := newRepositoryMock()
-	mock.On("GetUser", userID).Return(responseUser).Once()
+```go
+func TestDeleteUserSuccess(t *testing.T) {
+	// get the argument and return value for GetUser
+	values := getUserMockScenarios["success"]
+
+	// set up the mock with a helper function
+	mock := setupMock(values.UserID, values.UserToReturn)
+	app := &App{Repository: mock}
+
+	// test the function
+	assert.Equals(t, app.DeleteUser(values.UserID), values.UserToReturn)
+}
+```
+
+```go
+func setupMock(userID int, userToReturn *User) *RepositoryMock {
+	mock := &RepositoryMock{&mock.Mock{}}
+	mock.On("GetUser", userID).Return(userToReturn).Once()
 	return mock
 }
-
-// --- TO PUT IT ALL IN PLACE:
-
-func TestGetUserSuccess(t *testing.T) {
-	values := getUserScenarios["default"]
-	mock := setupMock(values.UserID, values.ResponseUser)
-	app := &App{Repository: mock}
-	assert.Equals(t, app.GetUser(values.Argument), values.ResponseUser)
-}
-
-func TestGetUserError(t *testing.T) {
-	values := getUserScenarios["none"]
-	mock := setupMock(values.UserID, values.ResponseUser)
-	app := &App{Repository: mock}
-	assert.Equals(t, app.GetUser(values.Argument), values.ResponseUser)
-}
-
-// --- OF COURSE THIS CAN BE APPLIED TO TABLE-DRIVEN TESTS OR WHATEVER FORMAT YOU USE.
 ```
+// --- OF COURSE THIS CAN BE APPLIED TO TABLE-DRIVEN TESTS OR WHATEVER FORMAT YOU USE.
 
 
 
