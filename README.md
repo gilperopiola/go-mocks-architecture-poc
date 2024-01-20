@@ -5,33 +5,57 @@ GOLANG. UNIT TESTS. MOCKS.
 THIS IS AN EASY PATTERN DESIGNED FOR SIMPLE, READABLE, UNDERSTANDABLE & REUSABLE CODE.
 
 ```bash
-var mockMethodScenarios = map[string]struct {
-  Argument int
-  Response *User
+// --- WE HAVE A METHOD THAT WE NEED TO TEST:
+
+func (a *App) GetUser(id int) *User {
+	if user, err := a.Repository.GetUser(id); err == nil {
+		return user
+	}
+
+	return nil
+}
+
+// --- SO WE WRITE THE DIFFERENT SCENARIOS THAT THE CALL TO a.Repository.GetUser(id) WILL HANDLE:
+
+var getUserScenarios = map[string]struct {
+	UserID int
+	ResponseUser *User
 }{
 	"none": {
-		Argument: 0,
-		Response: nil,
+		UserID: 0,
+		ResponseUser: nil,
 	},
 	"default": {
-		Argument: 1,
-		Response: &User{},
+		UserID: 1,
+		ResponseUser: &User{},
 	},
 }
 
-func setupMock(argument int, response *User) *RepositoryMock {
+// --- AND THEN JUST COPY-PASTE-CHANGE THIS FOR EACH METHOD:
+
+func setupMock(userID int, responseUser *User) *RepositoryMock {
 	mock := newRepositoryMock()
-	mock.On("MyMethod", argument).Return(response).Once()
+	mock.On("GetUser", userID).Return(responseUser).Once()
 	return mock
 }
 
-func TestSomething(t *testing.T) {
-	values := mockMethodScenarios["default"]
-	mock := setupMock(values.Argument, values.Response)
+// --- TO PUT IT ALL IN PLACE:
 
-	app := App{Repository: mock}
-	assert.True(t, app.Test())
+func TestGetUserSuccess(t *testing.T) {
+	values := getUserScenarios["default"]
+	mock := setupMock(values.UserID, values.ResponseUser)
+	app := &App{Repository: mock}
+	assert.Equals(t, app.GetUser(values.Argument), values.ResponseUser)
 }
+
+func TestGetUserError(t *testing.T) {
+	values := getUserScenarios["none"]
+	mock := setupMock(values.UserID, values.ResponseUser)
+	app := &App{Repository: mock}
+	assert.Equals(t, app.GetUser(values.Argument), values.ResponseUser)
+}
+
+// --- OF COURSE THIS CAN BE APPLIED TO TABLE-DRIVEN TESTS OR WHATEVER FORMAT YOU USE.
 ```
 
 
