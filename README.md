@@ -29,7 +29,7 @@ var getUserMockScenarios = map[string]struct {
 }{
 	"success": {
 		UserID: 1,
-		UserToReturn: &User{},
+		UserToReturn: &User{Name: "John"},
 	},
 	"user_not_found": {
 		UserID: 0,
@@ -38,14 +38,14 @@ var getUserMockScenarios = map[string]struct {
 }
 ```
 
-_**·** And to use this on a test, you just have to get the values of the scenario you need and set up the mock:_
+_**·** So, in a test, you set up the mock with the scenario's values:_
 
 ```go
 func TestDeleteUserSuccess(t *testing.T) {
-	// get the argument and return value for GetUser
+	// get the argument and return value for the call to GetUser
 	values := getUserMockScenarios["success"]
 
-	// set up the mock with a helper function
+	// set up the mock with a helper function, using the scenario's predefined values
 	mock := setupMock(values.UserID, values.UserToReturn)
 	app := &App{Repository: mock}
 
@@ -55,12 +55,21 @@ func TestDeleteUserSuccess(t *testing.T) {
 ```
 
 ```go
+// helper function
 func setupMock(userID int, userToReturn *User) *RepositoryMock {
 	mock := &RepositoryMock{&mock.Mock{}}
 	mock.On("GetUser", userID).Return(userToReturn).Once()
 	return mock
 }
 ```
+
+ * Works with any kind of test setup ✅ TDD, table driven tests, you name it.
+
+Simple code | Readable code | Understandable code | 
+--- | --- | --- |
+Seconds | 301 | 
+--- | --- | --- |
+--- | --- | --- |
 
 OF COURSE THIS CAN BE APPLIED TO TABLE-DRIVEN TESTS OR WHATEVER FORMAT YOU USE.
 
