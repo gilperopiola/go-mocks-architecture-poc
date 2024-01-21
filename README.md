@@ -93,17 +93,17 @@ func TestIsValid(t *testing.T) {
 		mock      func() *RepositoryMock
 	}{
 		{
-			name:      "valid",
-			want:      true,
-			mock:      func() *RepositoryMock {
+			name: "valid",
+			want: true,
+			mock: func() *RepositoryMock {
 				values := mockGetUserOptions["default"]
 				return setupMockWithGetUser(values.UserID, values.UserToReturn)
 			},
 		},
 		{
-			name:      "invalid",
-			want:      false,
-			mock:      func() *RepositoryMock {
+			name: "invalid",
+			want: false,
+			mock: func() *RepositoryMock {
 				values := mockGetUserOptions["none"]
 				return setupMockWithGetUser(values.UserID, values.UserToReturn)
 			},
@@ -122,7 +122,7 @@ func TestIsValid(t *testing.T) {
 For each test case we use a different key for the `mockGetUserOptions` map, like `["default"]` or `["none"]`. 
 
 Upcoming tests can reuse the existing scenarios, modify them (trying not to break other tests 😅) or add new ones to the map.
-
+----
 ### Now what? 🐿️
 
 On the `repository_mock.go` and `main_test.go` files you will find a simple example of how to implement this architecture.
