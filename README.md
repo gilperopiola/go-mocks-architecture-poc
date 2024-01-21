@@ -5,7 +5,6 @@
 🐋 This is an easy pattern designed for **SIMPLE** · **READABLE** · **UNDERSTANDABLE** · **REUSABLE CODE** 🐋
 
 ----
-
 ### Quickest tour ⚡
 
 _**·** We wanna unit test this method:_
@@ -45,122 +44,102 @@ func TestDeleteUserSuccess(t *testing.T) {
 	// get the argument and return value for the call to GetUser
 	values := getUserMockScenarios["success"]
 
-	// set up the mock with a helper function, using the scenario's predefined values
-	mock := setupMock(values.UserID, values.UserToReturn)
+	// set up the mock using the scenario's predefined values
+	mock := setupMockWithGetUser(values.UserID, values.UserToReturn)
 	app := &App{Repository: mock}
 
 	// test the function
-	assert.Equals(t, app.DeleteUser(values.UserID), values.UserToReturn)
+	got := app.DeleteUser(values.UserID)
+	assert.Equals(t, values.UserToReturn, got)
 }
 ```
 
 ```go
 // helper function
-func setupMock(userID int, userToReturn *User) *RepositoryMock {
+func setupMockWithGetUser(userID int, userToReturn *User) *RepositoryMock {
 	mock := &RepositoryMock{&mock.Mock{}}
 	mock.On("GetUser", userID).Return(userToReturn).Once()
 	return mock
 }
 ```
+----
 
- * Works with any kind of test setup ✅ TDD, table driven tests, you name it.
+### But is it any good? 🧐 
 
-Simple code | Readable code | Understandable code | 
---- | --- | --- |
-Seconds | 301 | 
---- | --- | --- |
---- | --- | --- |
+Well...
 
-OF COURSE THIS CAN BE APPLIED TO TABLE-DRIVEN TESTS OR WHATEVER FORMAT YOU USE.
+Simple code     | Readable code             | Understandable code      | 
+---             | ---                       | ---                      |
+Easy to pick up | Easy to master            | Easy to maintain         |
+Follows DRY     | Simple & complex examples | Re-use mock scenarios    |
+Adaptable       | Excellent documentation   | **@gilperopiola** 🔥     |
 
-Unit tests are often left unpolished, messy, dirty. 
+🐿️🐿️🐿️🐿️🐿️
 
-And if you can't read or understand what the test cases are doing, you won't be able to fix them when they break. 
+✅ **Works with any kind of test setup** ;)\
+✅ **Supports TDD**\
+✅ **Supports Table Driven Tests**
 
-So you spend some time failing to fully grasp the intent of each case before commenting it away and starting anew. Happens.
+----
+### Production ready real life example 📦
 
-So I've decided to spend a tiny bit of time on the short run (setting up mock scenarios and writing some simple almost-copy-paste functions) to:
+**Table driven tests**. The function to test has a call to `.Repository.GetUser(id int) *User` so we mock 2 different scenarios: _one gets the user successfully and the other doesn't_.
 
- - Improve tests simplicity and readability, understandability.
- - Be able to re-use mock scenarios in different tests.
- - Gain back some of the hours lost to aimless coding.
-
-This is just a POC of a way to structure mocks and use them effectively on table-driven unit tests in Go. It focuses on maximizing simplicity when writing or reading tests, giving a name and predefining the different scenarios that the mock will encounter, thus allowing different tests to reuse those predefined options.
-
-```bash
-var mockMethodScenarios = map[string]struct {
-  Argument int
-  Response *User
-}{
-	"none": {
-		Argument: 0,
-		Response: nil,
-	},
-	"default": {
-		Argument: 1,
-		Response: &User{},
-	},
-}
-
-func setupMock(argument int, response *User) *RepositoryMock {
-	mock := newRepositoryMock()
-	mock.On("MyMethod", argument).Return(response).Once()
-	return mock
-}
-
-func TestSomething(t *testing.T) {
-	values := mockMethodScenarios["default"]
-	mock := setupMock(values.Argument, values.Response)
-
-	app := App{Repository: mock}
-	assert.True(t, app.Test())
-}
-```
-
-`What!?😱` So the different ways a mock method can behave in are defined alongside the mock, making them reusable for every test that needs to mock that method? `Just incredible!!! 🥳`.
-
-## How do I use it? 🤔
-
-```bash
-func TestMethod(t *testing.T) {
+```go
+func TestIsValid(t *testing.T) {
 	tests := []struct {
 		name      string
 		want      bool
 		mock      func() *RepositoryMock
 	}{
 		{
-			name:      "success",
+			name:      "valid",
 			want:      true,
-			mock: func() *RepositoryMock {
-				values := mockMethodOptions["default"]
-				return setupMock(values.Argument, values.Response)
+			mock:      func() *RepositoryMock {
+				values := mockGetUserOptions["default"]
+				return setupMockWithGetUser(values.UserID, values.UserToReturn)
 			},
 		},
 		{
-			name:      "failure",
+			name:      "invalid",
 			want:      false,
-			mock: func() *RepositoryMock {
-				values := mockMethodOptions["none"]
-				return setupMock(values.Argument, values.Response)
+			mock:      func() *RepositoryMock {
+				values := mockGetUserOptions["none"]
+				return setupMockWithGetUser(values.UserID, values.UserToReturn)
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			app := App{Repository: tt.mock()}
-			got := app.Method()
+			got := app.IsValid()
 			assert.Equal(t, tt.want, got)
 		})
 	}
 }
 ```
 
-For each test case we use a different key for the `mockMethodOptions` map, like `["default"]` or `["none"]`. 
+For each test case we use a different key for the `mockGetUserOptions` map, like `["default"]` or `["none"]`. 
 
-Upcoming tests can choose to reuse the existing options, modify them (taking care of the other tests that use said option) or add new ones to the map.
+Upcoming tests can reuse the existing scenarios, modify them (trying not to break other tests 😅) or add new ones to the map.
 
-## Now what?
+### Now what? 🐿️
 
 On the `repository_mock.go` and `main_test.go` files you will find a simple example of how to implement this architecture.
 
-Hopefully I will finish the example on `/example`, tailored for more complex projects where the mocks are on a different package and method calls are just `w0nky~`.
+On `/example` we have a more complex _example_, the mocks are on a different package and multiple mock methods are called.
+
+----
+### Motivation 🚀
+
+###### **·** Unit tests are often left unpolished, messy, dirty. 
+
+###### **·** And if you can't read or understand what the test cases are doing, you won't be able to fix them when they break. 
+
+###### **·** So you spend some time failing to fully grasp the intent of each case before commenting it away and starting anew. Happens.
+
+###### **·** So why not spend a tiny bit of time on the short run (setting up mock scenarios and copy-pasting functions) to:
+
+###### **·** Improve tests simplicity and readability, understandability.
+###### **·** Be able to re-use mock scenarios in different tests.
+###### **·** Gain back some of the hours lost to aimless coding.
