@@ -41,16 +41,17 @@ _**·** All in all, you set up the mock with the values of your desired scenario
 
 ```go
 func TestDeleteUserSuccess(t *testing.T) {
-	// get the argument and return value for the call to GetUser
+	// get the argument and return value for the call to Repository.GetUser
 	values := getUserMockScenarios["success"]
 
 	// set up the mock using the scenario's predefined values
 	app := &App{Repository: setupMockWithGetUser(values.UserID, values.UserToReturn)}
+
 	got := app.DeleteUser(values.UserID)
 	
 	// assert results
 	assert.Equals(t, values.UserToReturn, got)
-	mock.AssertExpectations(t)
+	app.Repository.AssertExpectations(t)
 }
 ```
 
