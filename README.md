@@ -2,10 +2,10 @@
 
 **`⬤ Welcome!` ~~~ `GOLANG 🐹 · UNIT TESTS 🔍 · MOCKS 🎭`**
 
-🐋 This is an easy pattern designed for **SIMPLE** · **READABLE** · **UNDERSTANDABLE** · **REUSABLE CODE** 🐋
+🐋 This is an easy pattern designed for **SIMPLE** · **READABLE** · **REUSABLE CODE** 🐋
 
 ----
-### Quickest tour ⚡
+### Quickest tour⚡
 
 _**·** We wanna unit test this method:_
 
@@ -19,7 +19,7 @@ func (a *App) DeleteUser(id int) *User {
 	return nil
 }
 ```
-_**·** `a.Repository.GetUser(id)` is the actual call that we will mock. For each scenario (`success`, `user not found`) we define the **arguments** and **return values** of the call:_
+_**·** So `a.Repository.GetUser(id)` is the actual call that we will mock. For each scenario (`success` or `user not found`) we define the **arguments** and **return values** of the method call:_
 
 ```go
 var getUserMockScenarios = map[string]struct {
@@ -37,7 +37,7 @@ var getUserMockScenarios = map[string]struct {
 }
 ```
 
-_**·** So, in a test, you set up the mock with the scenario's values:_
+_**·** All in all, you set up the mock with the values of your desired scenario:_
 
 ```go
 func TestDeleteUserSuccess(t *testing.T) {
@@ -45,12 +45,12 @@ func TestDeleteUserSuccess(t *testing.T) {
 	values := getUserMockScenarios["success"]
 
 	// set up the mock using the scenario's predefined values
-	mock := setupMockWithGetUser(values.UserID, values.UserToReturn)
-	app := &App{Repository: mock}
-
-	// test the function
+	app := &App{Repository: setupMockWithGetUser(values.UserID, values.UserToReturn)}
 	got := app.DeleteUser(values.UserID)
+	
+	// assert results
 	assert.Equals(t, values.UserToReturn, got)
+	mock.AssertExpectations(t)
 }
 ```
 
