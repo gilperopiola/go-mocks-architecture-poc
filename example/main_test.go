@@ -63,7 +63,7 @@ func TestSvcGetUser(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 
 			// Prepare
-			svc := Svc{Repository: tc.deps.repository}
+			svc := Service{Repository: tc.deps.repository}
 
 			// Act
 			got, err := svc.GetUser(tc.in.userID, tc.in.checkIdentity)

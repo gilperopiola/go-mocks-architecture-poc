@@ -20,7 +20,7 @@ func TestAppIsUserValid(t *testing.T) {
 			want:      true,
 
 			mockRepository: func() *RepositoryMock {
-				values := repositoryMockGetUserScenarios["default"]
+				values := repositoryMockGetUserOptions["default"]
 				return setupRepositoryMockWithGetUser(values.UserID, values.Response, values.Error)
 			},
 		},
@@ -30,7 +30,7 @@ func TestAppIsUserValid(t *testing.T) {
 			want:      false,
 
 			mockRepository: func() *RepositoryMock {
-				values := repositoryMockGetUserScenarios["none"]
+				values := repositoryMockGetUserOptions["none"]
 				return setupRepositoryMockWithGetUser(values.UserID, values.Response, values.Error)
 			},
 		},
@@ -40,7 +40,7 @@ func TestAppIsUserValid(t *testing.T) {
 			want:      false,
 
 			mockRepository: func() *RepositoryMock {
-				values := repositoryMockGetUserScenarios["err_not_found"]
+				values := repositoryMockGetUserOptions["err_not_found"]
 				return setupRepositoryMockWithGetUser(values.UserID, values.Response, values.Error)
 			},
 		},

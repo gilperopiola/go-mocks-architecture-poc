@@ -2,7 +2,9 @@
 
 **`⬤ Welcome!` ~~~ `GOLANG 🐹 · UNIT TESTS 🔍 · MOCKS 🎭`**
 
-🐋 This is an easy pattern designed for **SIMPLE** · **READABLE** · **REUSABLE CODE** 🐋
+🐋 This is an easy 'pattern' designed for **SIMPLE** · **READABLE** · **REUSABLE CODE** 🐋
+
+**`(It's just dividing the values to be used by a mock method call into different reusable options)`**
 
 ----
 ### Quickest tour⚡
@@ -19,10 +21,10 @@ func (a *App) DeleteUser(id int) *User {
 	return nil
 }
 ```
-_**·** So `a.Repository.GetUser(id)` is the actual call that we will mock. For each scenario (`success` or `user not found`) we define the **arguments** and **return values** of the method call:_
+_**·** So `a.Repository.GetUser(id)` is the actual call that we will mock. For each option (`success` or `user not found`) we define the **arguments** and **return values** of the method call:_
 
 ```go
-var getUserMockScenarios = map[string]struct {
+var getUserMockoptions = map[string]struct {
 	UserID       int   // argument
 	UserToReturn *User // return value
 }{
@@ -37,14 +39,14 @@ var getUserMockScenarios = map[string]struct {
 }
 ```
 
-_**·** All in all, you set up the mock with the values of your desired scenario:_
+_**·** All in all, you set up the mock with the values of your desired option:_
 
 ```go
 func TestDeleteUserSuccess(t *testing.T) {
 	// get the argument and return value for the call to Repository.GetUser
-	values := getUserMockScenarios["success"]
+	values := getUserMockoptions["success"]
 
-	// set up the mock using the scenario's predefined values
+	// set up the mock using the option's predefined values
 	app := &App{Repository: setupMockWithGetUser(values.UserID, values.UserToReturn)}
 
 	got := app.DeleteUser(values.UserID)
@@ -72,10 +74,10 @@ Well...
 Simple code     | Readable code             | Understandable code      | 
 ---             | ---                       | ---                      |
 Easy to pick up | Easy to master            | Easy to maintain         |
-Follows DRY     | Simple & complex examples | Re-use mock scenarios    |
+Follows DRY     | Simple & complex examples | Re-use mock options    |
 Adaptable       | Excellent documentation   | **@gilperopiola** 🔥     |
 
-🐿️🐿️🐿️🐿️🐿️
+### 🐿️
 
 ✅ **Works with any kind of test setup** ;)\
 ✅ **Supports TDD**\
@@ -84,7 +86,7 @@ Adaptable       | Excellent documentation   | **@gilperopiola** 🔥     |
 ----
 ### Production ready real life example 📦
 
-**Table driven tests**. The function to test has a call to `.Repository.GetUser(id int) *User` so we mock 2 different scenarios: _one gets the user successfully and the other doesn't_.
+**Table driven tests**. The function to test has a call to `.Repository.GetUser(id int) *User` so we mock 2 different options: _one gets the user successfully and the other doesn't_.
 
 ```go
 func TestIsValid(t *testing.T) {
@@ -122,7 +124,7 @@ func TestIsValid(t *testing.T) {
 
 For each test case we use a different key for the `mockGetUserOptions` map, like `["default"]` or `["none"]`. 
 
-Upcoming tests can reuse the existing scenarios, modify them (trying not to break other tests 😅) or add new ones to the map.
+Upcoming tests can reuse the existing options, modify them (trying not to break other tests 😅) or add new ones to the map.
 ----
 ### Now what? 🐿️
 
@@ -139,8 +141,8 @@ On `/example` we have a more complex _example_, the mocks are on a different pac
 
 ###### **·** So you spend some time failing to fully grasp the intent of each case before commenting it away and starting anew. Happens.
 
-###### **·** So why not spend a tiny bit of time on the short run (setting up mock scenarios and copy-pasting functions) to:
+###### **·** So why not spend a tiny bit of time on the short run (setting up mock options and copy-pasting functions) to:
 
 ###### **·** Improve tests simplicity and readability, understandability.
-###### **·** Be able to re-use mock scenarios in different tests.
+###### **·** Be able to re-use mock options in different tests.
 ###### **·** Gain back some of the hours lost to aimless coding.

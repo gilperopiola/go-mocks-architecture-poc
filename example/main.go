@@ -10,19 +10,18 @@ import (
 // It's a little more complex than the one on the base folder, but it's simple still
 
 func main() {
-	svc := Svc{Repository: &Repository{}}
+	svc := Service{Repository: &Repository{}}
 	svc.Run()
 }
 
-// Our Svc has a RepositoryI on it.
+// Our Service has a RepositoryI on it.
 // This RepositoryI can be either a Repository or a RepositoryMock, either the real thing or the one we use on tests
-
-type Svc struct {
+type Service struct {
 	Repository RepositoryI
 }
 
 // On example/main_test.go we test this method, with mocks for the s.Repository.GetUser(id) and s.Repository.IsUserValid(id) calls
-func (s *Svc) GetUser(id int, checkIdentity bool) (*core.User, error) {
+func (s *Service) GetUser(id int, checkIdentity bool) (*core.User, error) {
 	user, err := s.Repository.GetUser(id)
 	if err != nil {
 		return &core.User{}, errGettingUser
@@ -45,6 +44,6 @@ var (
 	errInvalidUser = fmt.Errorf("error: invalid user")
 )
 
-func (s *Svc) Run() {
+func (s *Service) Run() {
 	fmt.Println("Service is running! (not really, it's just a POC)")
 }

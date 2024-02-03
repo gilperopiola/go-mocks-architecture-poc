@@ -22,9 +22,9 @@ func (m *RepositoryMock) GetUser(id int) (User, error) {
 	return args.Get(0).(User), args.Error(1)
 }
 
-// repositoryMockGetUserScenarios: map with the different scenarios the mock will handle.
-// Each scenario has the arguments and return values that the method call will use
-var repositoryMockGetUserScenarios = map[string]struct {
+// repositoryMockGetUserOptions: map with the different options the mock will handle.
+// Each option has the arguments and return values that the method call will use
+var repositoryMockGetUserOptions = map[string]struct {
 	// Arguments
 	UserID int
 
