@@ -4,7 +4,11 @@
 
 🐋 This is an easy 'pattern' designed for **SIMPLE** · **READABLE** · **REUSABLE CODE** 🐋
 
-**`(It's just dividing the values to be used by a mock method call into different reusable options)`**
+🤔 Need to mock a `.GetUser(id)` call?
+
+	Just define all different possible scenarios: success, success_admin, err_not_found, err_unknown!
+
+And set the **input and return values** for each scenario **:)**.
 
 ----
 ### Quickest tour⚡
@@ -79,7 +83,7 @@ Adaptable       | Excellent documentation   | **@gilperopiola** 🔥     |
 
 ### 🐿️
 
-✅ **Works with any kind of test setup** ;)\
+✅ **Works with any kind of test setup ;)**\
 ✅ **Supports TDD**\
 ✅ **Supports Table Driven Tests**
 
@@ -124,7 +128,7 @@ func TestIsValid(t *testing.T) {
 
 For each test case we use a different key for the `mockGetUserOptions` map, like `["default"]` or `["none"]`. 
 
-Upcoming tests can reuse the existing options, modify them (trying not to break other tests 😅) or add new ones to the map.
+#### Upcoming tests can reuse the existing options, modify them (carefully😅) or add new ones to the map.
 ----
 ### Now what? 🐿️
 
@@ -135,14 +139,16 @@ On `/example` we have a more complex _example_, the mocks are on a different pac
 ----
 ### Motivation 🚀
 
-###### **·** Unit tests are often left unpolished, messy, dirty. 
+	· Unit tests are often left unpolished, messy, dirty. 
 
-###### **·** And if you can't read or understand what the test cases are doing, you won't be able to fix them when they break. 
+	· And if you can't read or understand what the test cases are doing, you won't be able to fix them when they break. 
 
-###### **·** So you spend some time failing to fully grasp the intent of each case before commenting it away and starting anew. Happens.
+	· So you spend some time failing to fully grasp the intent of each case before commenting it away and starting anew. Happens.
 
-###### **·** So why not spend a tiny bit of time on the short run (setting up mock options and copy-pasting functions) to:
+	· So why not spend a tiny bit of time on the short run (setting up mock options and copy-pasting functions) to:
 
-###### **·** Improve tests simplicity and readability, understandability.
-###### **·** Be able to re-use mock options in different tests.
-###### **·** Gain back some of the hours lost to aimless coding.
+	· 	Improve tests simplicity and readability, understandability.
+	· 	Be able to re-use mock options in different tests.
+	· 	Gain back some of the hours lost to aimless coding.
+
+	:)
