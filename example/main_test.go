@@ -9,26 +9,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestSvcGetUser tests a method that makes 2 calls to external Repository methods.
-// So, to test Svc.GetUser in isolation, we have to mock both Repository.GetUser and Repository.IsUserValid
+// TestServiceGetUser tests a Service method that makes 2 calls to external Repository methods.
+// So, to test Svc.GetUser in isolation, we have to mock both Repository.GetUser and Repository.IsUserValid calls.
+func TestServiceGetUser(t *testing.T) {
 
-func TestSvcGetUser(t *testing.T) {
-
+	// Service dependencies
 	type deps struct {
 		repository *mocks.RepositoryMock
 	}
 
+	// Service.GetUser call parameters
 	type in struct {
 		userID        int
 		checkIdentity bool
 	}
 
+	// Service.GetUser call expected output
 	type out struct {
 		user *core.User
 		err  error
 	}
 
-	tests := []struct {
+	// Test cases
+	TCs := []struct {
 		name string
 		deps deps
 		in   in
@@ -55,24 +58,25 @@ func TestSvcGetUser(t *testing.T) {
 		{
 			name: "error_getting_user",
 			in:   in{userID: 0, checkIdentity: true},
-			out:  out{user: mocks.Options.RepositoryGetUser["err_not_found"].Response, err: errGettingUser},
+			out:  out{user: mocks.Options.RepositoryGetUser["err_not_found"].Response, err: errFailedToGetUser},
 			deps: deps{repository: mocks.SetupRepositoryWithGetUser("err_not_found")},
 		},
 	}
-	for _, tc := range tests {
+	for _, tc := range TCs {
 		t.Run(tc.name, func(t *testing.T) {
 
 			// Prepare
-			svc := Service{Repository: tc.deps.repository}
+			deps, in, out := tc.deps, tc.in, tc.out
+			service := Service{Repository: deps.repository}
 
 			// Act
-			got, err := svc.GetUser(tc.in.userID, tc.in.checkIdentity)
+			got, err := service.GetUser(in.userID, in.checkIdentity)
 
 			// Assert
-			assert.Equal(t, tc.out.user, got)
-			assert.Equal(t, tc.out.err, err)
+			assert.Equal(t, out.user, got)
+			assert.Equal(t, out.err, err)
 
-			svc.Repository.(*mocks.RepositoryMock).AssertExpectations(t)
+			service.Repository.(*mocks.RepositoryMock).AssertExpectations(t)
 		})
 	}
 }

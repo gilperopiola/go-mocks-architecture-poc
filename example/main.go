@@ -6,44 +6,55 @@ import (
 	"github.com/gilperopiola/go-mocks-architecture-poc/example/core"
 )
 
-// This is the first example of the go-mocks-architecture-poc.
-// It's a little more complex than the one on the base folder, but it's simple still
+// Hey :)
+// This is the first example of the Go Mocks Architecture POC.
 
-func main() {
-	svc := Service{Repository: &Repository{}}
-	svc.Run()
-}
+var (
+	errFailedToGetUser = fmt.Errorf("error: failed to get user")
+	errInvalidID       = fmt.Errorf("error: invalid id")
+	errInvalidUser     = fmt.Errorf("error: invalid user")
+)
 
-// Our Service has a RepositoryI on it.
-// This RepositoryI can be either a Repository or a RepositoryMock, either the real thing or the one we use on tests
-type Service struct {
-	Repository RepositoryI
-}
-
-// On example/main_test.go we test this method, with mocks for the s.Repository.GetUser(id) and s.Repository.IsUserValid(id) calls
+// This is the method we actually test on example/main_test.go.
+// Both calls to s.Repository.GetUser(id) and s.Repository.IsUserValid(id) are mocked.
+// Both of those are calls to the Repository, the interface that we mock.
+// We test the different scenarios that the Service can run into, and those depend on the result of the calls to the Repository.
 func (s *Service) GetUser(id int, checkIdentity bool) (*core.User, error) {
+
+	// Scenario 1: GetUser returns an error
 	user, err := s.Repository.GetUser(id)
 	if err != nil {
-		return &core.User{}, errGettingUser
+		return &core.User{}, errFailedToGetUser
 	}
 
+	// Scenario 2: GetUser returns an invalid ID
 	if user.ID == 0 {
 		return &core.User{}, errInvalidID
 	}
 
+	// Scenario 3: GetUser returns a valid user, but checkIdentity is true and IsUserValid returns false
 	if checkIdentity && !s.Repository.IsUserValid(id) {
 		return &core.User{}, errInvalidUser
 	}
 
+	// Scenario 4: Success
 	return user, nil
 }
 
-var (
-	errGettingUser = fmt.Errorf("error getting user")
-	errInvalidID   = fmt.Errorf("error: invalid id")
-	errInvalidUser = fmt.Errorf("error: invalid user")
-)
+// init is used instead of main because we are on the example package.
+// We simulate a simple API.
+func init() {
+	svc := Service{Repository: NewRepository()}
+	svc.Run()
+}
 
+// Our Service has a Repository inside of it.
+// This Repository can be either a repository or a repositoryMock, either the real thing or the one we use on tests.
+type Service struct {
+	Repository Repository
+}
+
+// Run is here to simulate the service running.
 func (s *Service) Run() {
 	fmt.Println("Service is running! (not really, it's just a POC)")
 }

@@ -12,14 +12,14 @@ func TestAppIsUserValid(t *testing.T) {
 		argUserID int
 		want      bool
 
-		mockRepository func() *RepositoryMock
+		mockRepository func() *repositoryMock
 	}{
 		{
 			name:      "success",
 			argUserID: 1,
 			want:      true,
 
-			mockRepository: func() *RepositoryMock {
+			mockRepository: func() *repositoryMock {
 				values := repositoryMockGetUserOptions["default"]
 				return setupRepositoryMockWithGetUser(values.UserID, values.Response, values.Error)
 			},
@@ -29,7 +29,7 @@ func TestAppIsUserValid(t *testing.T) {
 			argUserID: 0,
 			want:      false,
 
-			mockRepository: func() *RepositoryMock {
+			mockRepository: func() *repositoryMock {
 				values := repositoryMockGetUserOptions["none"]
 				return setupRepositoryMockWithGetUser(values.UserID, values.Response, values.Error)
 			},
@@ -39,7 +39,7 @@ func TestAppIsUserValid(t *testing.T) {
 			argUserID: 0,
 			want:      false,
 
-			mockRepository: func() *RepositoryMock {
+			mockRepository: func() *repositoryMock {
 				values := repositoryMockGetUserOptions["err_not_found"]
 				return setupRepositoryMockWithGetUser(values.UserID, values.Response, values.Error)
 			},

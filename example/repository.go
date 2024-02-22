@@ -2,21 +2,36 @@ package example
 
 import "github.com/gilperopiola/go-mocks-architecture-poc/example/core"
 
-// RepositoryI is the interface for the Repository, it holds all of its methods
-type RepositoryI interface {
+// Repository is the interface for the repository layer of the architecture.
+// It should handle all the external communication and data access.
+// This is the contract that the repository must fulfill.
+type Repository interface {
 	GetUser(id int) (*core.User, error)
 	IsUserValid(id int) bool
 }
 
-// Repository is the actual Repository. This would be used in a real life scenario
-type Repository struct{}
+// repository is the actual implementation of the Repository interface.
+type repository struct{}
 
-// GetUser should be the actual implementation of the method. Used in real life
-func (r *Repository) GetUser(id int) (*core.User, error) {
-	return &core.User{}, nil
+// NewRepository returns a new Repository.
+func NewRepository() Repository {
+	return &repository{}
 }
 
-// IsUserValid should be the actual implementation of the method. Used in real life
-func (r *Repository) IsUserValid(id int) bool {
-	return false
+// GetUser should be the actual implementation of the method.
+func (r *repository) GetUser(id int) (*core.User, error) {
+
+	// ... some code to get the user from the database
+	// ... error handling
+
+	return &core.User{ID: id, Username: "gilperopiola"}, nil
+}
+
+// IsUserValid should be the actual implementation of the method.
+func (r *repository) IsUserValid(id int) bool {
+
+	// ... some code to get the user from the database
+	// ... check user validity
+
+	return id > 0
 }

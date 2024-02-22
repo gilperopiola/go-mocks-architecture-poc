@@ -6,7 +6,7 @@ import (
 	"github.com/gilperopiola/go-mocks-architecture-poc/example/core"
 )
 
-// Options holds all of the different cases each mock function will handle
+// Options holds all of the different cases each mock function will handle.
 var Options = struct {
 	RepositoryGetUser     map[string]repositoryGetUserValues
 	RepositoryIsUserValid map[string]repositoryIsUserValidValues
@@ -20,7 +20,7 @@ var Options = struct {
 		},
 		"default": {
 			UserID:   1,
-			Response: &core.User{ID: 1, Username: "John"},
+			Response: &core.User{ID: 1, Username: "gilperopiola"},
 			Error:    nil,
 		},
 		"err_not_found": {

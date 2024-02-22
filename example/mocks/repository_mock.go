@@ -6,15 +6,19 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
+// RepositoryMock is a mock of Repository interface.
 type RepositoryMock struct {
 	*mock.Mock
 }
 
+// NewRepositoryMock returns a new mock of the Repository interface.
 func NewRepositoryMock() *RepositoryMock {
 	return &RepositoryMock{&mock.Mock{}}
 }
 
-/* Get User Mock */
+/* ----------------------------------- */
+/*          - Get User Mock -          */
+/* ----------------------------------- */
 
 func (m *RepositoryMock) GetUser(id int) (*core.User, error) {
 	args := m.Called(id)
@@ -35,7 +39,9 @@ func SetupRepositoryWithGetUser(option string) *RepositoryMock {
 	return repositoryMock
 }
 
-/* Is User Valid Mock */
+/* ----------------------------------- */
+/*       - Is User Valid Mock -        */
+/* ----------------------------------- */
 
 func (m *RepositoryMock) IsUserValid(id int) bool {
 	args := m.Called(id)
@@ -48,6 +54,7 @@ type repositoryIsUserValidValues struct {
 	Valid bool
 }
 
+// SetupRepositoryWithIsUserValid takes a mock as parameter because a previous mocked call to the GetUser method is needed.
 func SetupRepositoryWithIsUserValid(mock *RepositoryMock, option string) *RepositoryMock {
 	optionValues := Options.RepositoryIsUserValid[option]
 	mock.On("IsUserValid", optionValues.UserID).Return(optionValues.Valid).Once()
